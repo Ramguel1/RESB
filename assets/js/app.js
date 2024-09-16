@@ -28,6 +28,8 @@ btnGM.onclick = async () => {
         });
     }
 }
+
+
 const cargarMenu = async () => {
     const datos2 = new FormData();
     datos2.append("action", "cargarM");
@@ -35,21 +37,57 @@ const cargarMenu = async () => {
     let json = await respuesta.json();
 
     let tablaHTML = ``;
-    let index = 1;
     json.data.forEach(item => {
         tablaHTML += `
-        <div class="list-group">
-            <button type="button" onclick="add(${index})" class="list-group-item list-group-listen-action d-flex justify-content-between align-items-center">
-                ${item.descr}
-                <span class="badge text-bg-light rounded-pill">$${parseFloat(item.costo).toFixed(2)}</span>
-            </button>
+        <div class="row">
+            <div class="list-group col-sm-10">
+                <button type="button" onclick="add(${item.idm}),reinicia()" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    ${item.descr}
+                    <span class="badge text-bg-light rounded-pill">$${parseFloat(item.costo).toFixed(2)}</span>
+                </button>
+                 <button class="btn btn-outline-danger w-100" onclick="eliminarM(${item.idm}),reinicia()"><i class="bi bi-trash"></i></button>
+            </div>
+            
         </div>
         `;
-        index++;
     });
     document.getElementById("listaMenu").innerHTML = tablaHTML;
     cargarOrden();
+    calcularpropina();
 }
+
+
+const eliminarM = async (idm) => {
+    Swal.fire({
+        title: "Estás seguro de eliminar este platillo del menú?",
+        showDenyButton: true,
+        confirmButtonText: "Sí",
+        denyButtonText: "No"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            let datos = new FormData();
+            datos.append("idm", idm);
+            datos.append("action", "dellM");
+            let cargM = await fetch("metodo.php", { method: 'POST', body: datos });
+            const result = await cargM.json();
+            if (result.success) {
+                cargarMenu();
+            } else {
+                console.error("Error:", result.error);
+            }
+            calcularpropina();
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
 const cargarOrden = async (porcentaje = 0) => {
     const datos2 = new FormData();
     datos2.append("action", "cargarM");
@@ -82,7 +120,7 @@ const cargarOrden = async (porcentaje = 0) => {
                     <div class="d-flex w-100 justify-content-between">
                         <h4 class="align-bottom">Cantidad: <b>${o.cant}</b></h4>
                         <h4 class="align-middle">Total: <b>$ ${(parseFloat(itemM.costo) * parseFloat(o.cant)).toFixed(2)}</b></h4>
-                        <button class="btn btn-outline-danger my-1" onclick="eliminarO(${o.ido})"><i class="bi bi-trash"></i></i></button>
+                        <button class="btn btn-outline-danger my-1" onclick="eliminarO(${o.ido})"><i class="bi bi-trash"></i></button>
                    </div>
                 </div>
                 `;
@@ -90,7 +128,7 @@ const cargarOrden = async (porcentaje = 0) => {
             }
         });
         listaOrden.innerHTML = ordenL;
-        calcularpropina()
+     
         let propina = (porcentaje / 100) * subtotal;
         let total = subtotal + propina;
 
@@ -100,6 +138,18 @@ const cargarOrden = async (porcentaje = 0) => {
     }
 };
 
+
+const calcularpropina = async () => {
+    let bpropina = document.querySelector('input[name="propinaa"]:checked');
+    let porcentaje = 0;
+    if (bpropina) {
+        porcentaje = parseFloat(bpropina.value);
+    cargarOrden(porcentaje);
+ }
+
+
+};
+
 const add = async (index) => {
     let datos = new FormData();
     datos.append("idm", index);
@@ -107,35 +157,16 @@ const add = async (index) => {
     let cargM = await fetch("metodo.php", { method: 'POST', body: datos });
     const result = await cargM.json();
     cargarOrden();
+    calcularpropina();
     if (result.success) {
         cargarOrden();
+        calcularpropina();
     } else {
         console.error("Error ", result.error);
     }
 }
 
-const eliminarM = async (index) => {
-    Swal.fire({
-        title: "Estás seguro de eliminar?",
-        showDenyButton: true,
-        confirmButtonText: "Sí",
-        denyButtonText: "No"
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            let datos = new FormData();
-            datos.append("idm", index);
-            datos.append("action", "dellO");
-            let cargM = await fetch("metodo.php", { method: 'POST', body: datos });
-            const result = await cargM.json();
-            if (result.success) {
-                cargarMenu();
-                cargarOrden();
-            } else {
-                console.error("Error:", result.error);
-            }
-        }
-    });
-}
+
 const eliminarO = async (ido) => {
     Swal.fire({
         title: "Estás seguro de eliminar?",
@@ -151,6 +182,7 @@ const eliminarO = async (ido) => {
             let result = await respuesta.json();
             if (result.success) {
                 cargarOrden();
+                reinicia();
             } else {
                 console.error("Error ", result.error);
             }
@@ -158,15 +190,7 @@ const eliminarO = async (ido) => {
     });
 }
 
-const calcularpropina = async () => {
-    let bpropina = document.querySelector('input[name="propinaa"]:checked');
-    let porcentaje = 0;
-    if (bpropina) {
-        porcentaje = parseFloat(bpropina.value);
-    }
 
-    cargarOrden(porcentaje);
-};
 
 const terminar = () => {
     Swal.fire({
@@ -198,3 +222,6 @@ const terminar = () => {
     });
 };
 
+const reinicia=()=>{
+    location.reload()
+}

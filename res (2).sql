@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-09-2024 a las 09:40:11
+-- Tiempo de generación: 16-09-2024 a las 21:29:05
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -28,9 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `menu` (
-  `idm` int(60) NOT NULL,
-  `descr` varchar(30) NOT NULL,
-  `costo` int(60) NOT NULL
+  `idm` int(11) NOT NULL,
+  `descr` varchar(50) NOT NULL,
+  `costo` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -38,8 +38,10 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`idm`, `descr`, `costo`) VALUES
-(1, 'foto', 12),
-(2, 'foto', 233);
+(4, 'tacos', 100),
+(5, 'chilaquiles', 70),
+(7, 'enchiladas', 50),
+(8, 'agua', 15);
 
 -- --------------------------------------------------------
 
@@ -48,9 +50,9 @@ INSERT INTO `menu` (`idm`, `descr`, `costo`) VALUES
 --
 
 CREATE TABLE `orden` (
-  `ido` int(60) NOT NULL,
-  `cant` int(30) NOT NULL,
-  `idm` int(60) NOT NULL
+  `ido` int(11) NOT NULL,
+  `cant` int(50) NOT NULL,
+  `idm` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -58,8 +60,10 @@ CREATE TABLE `orden` (
 --
 
 INSERT INTO `orden` (`ido`, `cant`, `idm`) VALUES
-(8, 4, 1),
-(9, 3, 2);
+(7, 1, 6),
+(14, 4, 4),
+(16, 5, 7),
+(20, 2, 8);
 
 --
 -- Índices para tablas volcadas
@@ -85,13 +89,13 @@ ALTER TABLE `orden`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `idm` int(60) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idm` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `orden`
 --
 ALTER TABLE `orden`
-  MODIFY `ido` int(60) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
